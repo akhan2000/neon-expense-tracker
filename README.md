@@ -208,5 +208,7 @@ Once the subscription is created, you can check if data is being replicated by q
 
 ```bash
 SELECT * FROM my_table;
-You should see the replicated data from Neon.
 ```
+You should see the replicated data from Neon. 
+
+Refer to the **URL**: https://neon.tech/docs/guides/logical-replication-postgres for more information on logical replication with Postgres, and the **URL**: https://neon.tech/docs/guides/railway for details on using Neon with Railway.
