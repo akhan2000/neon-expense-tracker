@@ -1,9 +1,9 @@
-const client = require('../db');
+// expenses Controller 
+const { externalClient } = require('../db');
 
-// Fetch expenses
 const getExpenses = async (req, res) => {
   try {
-    const result = await client.query('SELECT * FROM expenses');
+    const result = await externalClient.query('SELECT * FROM expenses');
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching expenses:', err);

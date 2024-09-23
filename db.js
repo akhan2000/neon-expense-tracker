@@ -1,39 +1,32 @@
-// db.js
 require('dotenv').config();
 const { Client } = require('pg');
 
-const client = new Client({
-  host: process.env.RDS_HOST,
-  database: process.env.RDS_DATABASE,
-  user: process.env.RDS_USER,
-  password: process.env.RDS_PASSWORD,
-  port: process.env.RDS_PORT,
-  ssl: { rejectUnauthorized: false }, // Use SSL for secure connections
+// Neon Database Client
+const neonClient = new Client({
+  host: process.env.NEON_HOST,
+  database: process.env.NEON_DATABASE,
+  user: process.env.NEON_USER,
+  password: process.env.NEON_PASSWORD,
+  port: process.env.NEON_PORT,
+  ssl: { rejectUnauthorized: false }
 });
 
-client.connect()
-  .then(() => console.log('Connected to AWS RDS Postgres'))
-  .catch(err => console.error('Connection error', err.stack));
+// Railway Database Client
+const externalClient = new Client({
+  host: process.env.RAILWAY_HOST,
+  database: process.env.RAILWAY_DATABASE,
+  user: process.env.RAILWAY_USER,
+  password: process.env.RAILWAY_PASSWORD,
+  port: process.env.RAILWAY_PORT,
+  ssl: { rejectUnauthorized: false }
+});
 
-module.exports = client;
+neonClient.connect()
+  .then(() => console.log('Connected to Neon Postgres'))
+  .catch(err => console.error('Neon Connection error', err.stack));
 
+externalClient.connect()
+  .then(() => console.log('Connected to Railway Postgres'))
+  .catch(err => console.error('Railway Postgres Connection error', err.stack));
 
-
-// // db.js
-// require('dotenv').config();
-// const { Client } = require('pg');
-
-// const client = new Client({
-//   host: process.env.PGHOST,
-//   database: process.env.PGDATABASE,
-//   user: process.env.PGUSER,
-//   password: process.env.PGPASSWORD,
-//   port: process.env.PGPORT,
-//   ssl: { rejectUnauthorized: false }, // SSL for security purposes (TBD)
-// });
-
-// client.connect()
-//   .then(() => console.log('Connected to external Postgres'))
-//   .catch(err => console.error('Connection error', err.stack));
-
-// module.exports = client;
+module.exports = { neonClient, externalClient };

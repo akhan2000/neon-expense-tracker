@@ -1,18 +1,66 @@
+// expensesController.js
+const { neonClient, externalClient } = require('../db');
 
-const express = require('express');
-const { getExpenses, createExpense, updateExpense, deleteExpense } = require('../controllers/expensesController');
-const router = express.Router();
+// Fetch expenses (Read from AWS RDS)
+const getExpenses = async (req, res) => {
+  try {
+    const result = await externalClient.query('SELECT * FROM expenses');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching expenses:', err);
+    res.status(500).send('Error fetching expenses');
+  }
+};
 
-// get
-router.get('/', getExpenses);
+// Create expense (Write to Neon)
+const createExpense = async (req, res) => {
+  const { user_id, category, amount, expense_date } = req.body;
+  try {
+    const result = await neonClient.query(
+      'INSERT INTO expenses (user_id, category, amount, expense_date) VALUES ($1, $2, $3, $4) RETURNING *',
+      [user_id, category, amount, expense_date]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error creating expense:', err);
+    res.status(500).send('Error creating expense');
+  }
+};
 
-// create
-router.post('/', createExpense);
+// Update expense (Write to Neon)
+const updateExpense = async (req, res) => {
+  const { id } = req.params;
+  const { category, amount } = req.body;
+  try {
+    const result = await neonClient.query(
+      'UPDATE expenses SET category = $1, amount = $2 WHERE id = $3 RETURNING *',
+      [category, amount, id]
+    );
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
+    } else {
+      res.status(404).send('Expense not found');
+    }
+  } catch (err) {
+    console.error('Error updating expense:', err);
+    res.status(500).send('Error updating expense');
+  }
+};
 
-// Update expense by ID
-router.put('/:id', updateExpense);
+// Delete expense (Write to Neon)
+const deleteExpense = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await neonClient.query('DELETE FROM expenses WHERE id = $1 RETURNING *', [id]);
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
+    } else {
+      res.status(404).send('Expense not found');
+    }
+  } catch (err) {
+    console.error('Error deleting expense:', err);
+    res.status(500).send('Error deleting expense');
+  }
+};
 
-// Delete expense by ID
-router.delete('/:id', deleteExpense);
-
-module.exports = router;
+module.exports = { getExpenses, createExpense, updateExpense, deleteExpense };
