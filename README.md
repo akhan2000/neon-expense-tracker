@@ -55,7 +55,7 @@ This will start the app on http://localhost:3000.
 ### 5. Access Swagger Documentation Locally
 Once the app is running, you can access the Swagger UI to test the API endpoints at:
 
-**URL**:[http://localhost:3000/api-docs]
+**URL**:[http://localhost:3000/api-docs](http://localhost:3000/api-docs])
 
 ---
 
