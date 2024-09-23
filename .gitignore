@@ -1,0 +1,24 @@
+.env
+.DS_Store
+Thumbs.db
+node_modules/
+package-lock.json
+venv/
+logs/
+*.log
+.vscode/
+.idea/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# Git-specific files
+.git/
+
+# Ignore backups or temporary files
+*.bak
+*.tmp
+*~
+
+# Ignore build artifacts
+dist/
+build/
