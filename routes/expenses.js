@@ -2,7 +2,65 @@ const express = require('express');
 const router = express.Router();
 const { neonClient, externalClient } = require('../db');
 
-// Fetch expenses (Read from Railway PostGres)
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Expense:
+ *       type: object
+ *       required:
+ *         - user_id
+ *         - category
+ *         - amount
+ *         - expense_date
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The auto-generated id of the expense
+ *         user_id:
+ *           type: integer
+ *           description: The id of the user
+ *         category:
+ *           type: string
+ *           description: The category of the expense
+ *         amount:
+ *           type: number
+ *           description: The amount of the expense
+ *         expense_date:
+ *           type: string
+ *           format: date
+ *           description: The date of the expense
+ *       example:
+ *         id: 1
+ *         user_id: 1
+ *         category: Food
+ *         amount: 20.5
+ *         expense_date: 2023-10-01
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Expenses
+ *   description: The expenses managing API
+ */
+
+/**
+ * @swagger
+ * /api/expenses:
+ *   get:
+ *     summary: Returns the list of all the expenses
+ *     tags: [Expenses]
+ *     responses:
+ *       200:
+ *         description: The list of the expenses
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Expense'
+ */
 const getExpenses = async (req, res) => {
   try {
     const result = await externalClient.query('SELECT * FROM expenses');
@@ -13,7 +71,28 @@ const getExpenses = async (req, res) => {
   }
 };
 
-// Create expense (Write to Neon)
+/**
+ * @swagger
+ * /api/expenses:
+ *   post:
+ *     summary: Creates a new expense
+ *     tags: [Expenses]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Expense'
+ *     responses:
+ *       201:
+ *         description: The created expense
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Expense'
+ *       500:
+ *         description: Some server error
+ */
 const createExpense = async (req, res) => {
   const { user_id, category, amount, expense_date } = req.body;
   try {
@@ -28,7 +107,37 @@ const createExpense = async (req, res) => {
   }
 };
 
-// Update expense (Write to Neon)
+/**
+ * @swagger
+ * /api/expenses/{id}:
+ *   put:
+ *     summary: Updates an expense
+ *     tags: [Expenses]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The expense id
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Expense'
+ *     responses:
+ *       200:
+ *         description: The updated expense
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Expense'
+ *       404:
+ *         description: Expense not found
+ *       500:
+ *         description: Some server error
+ */
 const updateExpense = async (req, res) => {
   const { id } = req.params;
   const { category, amount } = req.body;
@@ -48,7 +157,31 @@ const updateExpense = async (req, res) => {
   }
 };
 
-// Delete expense (Write to Neon)
+/**
+ * @swagger
+ * /api/expenses/{id}:
+ *   delete:
+ *     summary: Deletes an expense
+ *     tags: [Expenses]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The expense id
+ *     responses:
+ *       200:
+ *         description: The deleted expense
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Expense'
+ *       404:
+ *         description: Expense not found
+ *       500:
+ *         description: Some server error
+ */
 const deleteExpense = async (req, res) => {
   const { id } = req.params;
   try {
