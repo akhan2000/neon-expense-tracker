@@ -1,7 +1,8 @@
-// expensesController.js
+const express = require('express');
+const router = express.Router();
 const { neonClient, externalClient } = require('../db');
 
-// Fetch expenses (Read from AWS RDS)
+// Fetch expenses (Read from Railway PostGres)
 const getExpenses = async (req, res) => {
   try {
     const result = await externalClient.query('SELECT * FROM expenses');
@@ -63,4 +64,10 @@ const deleteExpense = async (req, res) => {
   }
 };
 
-module.exports = { getExpenses, createExpense, updateExpense, deleteExpense };
+// Define routes
+router.get('/', getExpenses);
+router.post('/', createExpense);
+router.put('/:id', updateExpense);
+router.delete('/:id', deleteExpense);
+
+module.exports = router;

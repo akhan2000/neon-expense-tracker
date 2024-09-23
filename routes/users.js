@@ -1,7 +1,8 @@
-// usersController.js
+const express = require('express');
+const router = express.Router();
 const { neonClient, externalClient } = require('../db');
 
-// Fetch users (Read from AWS RDS)
+// Fetch users (Read from Railway PSQL)
 const getUsers = async (req, res) => {
   try {
     const result = await externalClient.query('SELECT * FROM users');
@@ -63,4 +64,10 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, createUser, updateUser, deleteUser };
+// Define routes
+router.get('/', getUsers);
+router.post('/', createUser);
+router.put('/:id', updateUser);
+router.delete('/:id', deleteUser);
+
+module.exports = router;
