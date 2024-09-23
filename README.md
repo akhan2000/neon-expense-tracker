@@ -174,7 +174,7 @@ Before setting up replication, you need to ensure that **logical replication** i
 ```bash
 SHOW wal_level;
 ```
--- Output should be "logical"
+Output should be "logical"
 
 #### 2. Create a Publication on Neon
 Next, create a publication on the Neon database. A publication is essentially a collection of tables that you want to replicate to the target system (Railway, in this case). You can create a publication for one or more tables by running:
