@@ -1,3 +1,5 @@
+// users controller 
+
 const client = require('../db');
 
 // Get
